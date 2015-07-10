@@ -1,0 +1,16 @@
+kernel vec4 coreImageKernel(sampler image, float exposure, float saturation)
+{
+vec4 i;
+vec4 o;
+vec4 hsv;
+i = unpremultiply(sample(image, samplerCoord(image)));
+hsv = RGBtoHSV(i);
+// Whatever processing is required here……
+hsv.z *= exposure;
+hsv.y *= saturation;
+o = HSVtoRGB(hsv);
+
+// Maintain alpha
+o.a = i.a;
+return premultiply(o);
+}

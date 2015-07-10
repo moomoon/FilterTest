@@ -1,0 +1,8 @@
+vec4 HSVtoRGB(vec4 HSV)
+{
+vec4 hue;
+hue.x = abs(HSV.x - 3.0) - 1.0;
+hue.y = 2.0 - abs(HSV.x - 2.0);
+hue.z = 2.0 - abs(HSV.x - 4.0);
+return ((clamp(hue,0.0,1.0) - 1.0) * HSV.y + 1.0) * HSV.z;
+}

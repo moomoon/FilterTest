@@ -1,0 +1,8 @@
+kernel vec4 coreImageKernel(float width)
+{
+    float x = destCoord().x;
+    vec4 hsv = vec4(6.0 * x / width, 1.0, 0.5, 0.0);
+    vec4 o = HSVtoRGB(hsv);
+    o.a = 1.0;
+    return premultiply(o);
+}

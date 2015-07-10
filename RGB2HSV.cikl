@@ -1,0 +1,16 @@
+vec4 RGBtoHSV(vec4 RGB)
+{
+vec4 HSV;
+float maxV = max(RGB.r, max(RGB.g, RGB.b));
+float C = maxV - min(RGB.r, min(RGB.g, RGB.b));
+float D = step(0.0, -C);
+
+HSV.z = maxV;
+HSV.y = C / (maxV + D);
+vec4 Delta = (maxV - RGB) / (C + D);
+Delta -= Delta.brga;
+Delta += vec4(2.0,4.0,6.0,0.0);
+Delta *= step(maxV, RGB.gbra);
+HSV.x = fract(max(Delta.r, max(Delta.g, Delta.b)) / 6.0)*6.0;
+return HSV;
+}

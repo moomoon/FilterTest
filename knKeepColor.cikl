@@ -1,0 +1,29 @@
+kernel vec4 coreImageKernel(__sample s, float targetHue, float range1, float range2)
+{
+    float halfRange1;
+    float halfRange2;
+    vec4 i;
+    vec4 o;
+    vec4 hsv;
+    float sat;
+    float dif;
+
+    halfRange1 = range1 / 2.0;
+    halfRange2 = range2 / 2.0;
+    i = unpremultiply(s);
+    hsv = RGBtoHSV(i);
+    dif = abs(hsv.x - targetHue);
+    if(dif > 3.0){
+        dif = 6.0 - dif;
+    }
+    if(dif < halfRange1) {
+        sat = 1.0;
+    } else if(dif < halfRange2 ) {
+        sat = 1.0 - (dif - halfRange1) / (halfRange2 - halfRange1);
+    } else {
+        sat = 0.0;
+    }
+    o = HSVtoRGB(vec4(hsv.x, hsv.y * sat, hsv.zw));
+    o.a = i.a;
+    return  premultiply(o);
+}
