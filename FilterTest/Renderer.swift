@@ -16,6 +16,7 @@ class Renderer {
         didSet{
             renderGraphContext.onSynchronize = {
                 // draw here
+                println("**********************")
                 if let ciImage = (self.renderGraph?.filter as? ConcreteFilter)?.outputImage {
                     self.ciContext.drawImage(ciImage, inRect: ciImage.extent(), fromRect: ciImage.extent())
                     
@@ -114,7 +115,15 @@ class VideoGenerator: SimpleUpdatable, Syncable, RenderGraph {
     func emit() {
         self.synced.notifyUpdated()
     }
+    
 }
+
+func video(path: String, context: RenderGraphContext) -> RenderGraph {
+    let gen = VideoGenerator(path: path, synced: context.syncManager.newSynced())
+    context.updateManager.registerUpdatable(gen)
+    return gen
+}
+
 
 
 
@@ -126,10 +135,47 @@ struct ImmutableGraph: RenderGraph {
     let filter: Filter
 }
 
-struct RenderGraphGroup: RenderGraph {
+struct DelegateGraphGroup: RenderGraph{
     let subGraphs: [RenderGraph]
-    var filter: Filter { return subGraphs / {$0.filter} }
+    let delegate: ([Filter]) -> ConcreteFilter
+    var filter: Filter{ return delegate(subGraphs.map{$0.filter})}
 }
+
+func delegateGraphGroup(subGraphs: [RenderGraph], delegate:([Filter]) -> ConcreteFilter) -> DelegateGraphGroup {
+    return DelegateGraphGroup(subGraphs: subGraphs, delegate: delegate)
+}
+func combine(subGraphs: [RenderGraph]) -> RenderGraph{
+    return DelegateGraphGroup(subGraphs: subGraphs, delegate: FilterGroup.reduceFilters)
+}
+
+func combine(graphs: RenderGraph...) -> RenderGraph {
+    return combine(graphs)
+}
+
+func monoEdge(graph: RenderGraph)(level: Int) -> RenderGraph {
+    return [0...level].reduce(monoEdge(graph)){multiplyConcrete(monoEdge($0.0))(rhs: $0.0)}
+}
+
+func glassDistortion(input: RenderGraph) -> RenderGraph {
+    return combine(input, immutable(glassDistortionAddTexture()))
+}
+
+func mask(input: RenderGraph)(mask: RenderGraph) -> RenderGraph {
+    return combine(input, combine(mask, immutable(BlendWithMaskAddMask())))
+}
+
+func multiply(graph: RenderGraph) -> RenderGraph {
+    return combine(graph, immutable(MultiplyCompositingAddInput()))
+}
+
+func multiplyConcrete (lhs: RenderGraph)(rhs: RenderGraph) -> RenderGraph {
+    return combine(lhs, multiply(rhs))
+}
+
+func monoEdge(graph: RenderGraph) -> RenderGraph {
+    return combine(graph, immutable(edges), immutable(mono), immutable(invert))
+}
+
 
 class RenderGraphContext{
     let syncManager: SynchronizedUpon

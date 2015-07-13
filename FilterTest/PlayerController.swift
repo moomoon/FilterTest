@@ -17,19 +17,21 @@ class PlayerController: GLKViewController {
     private let renderer = Renderer()
     var backgroundVideoPath: String! = nil { didSet { if let path = backgroundVideoPath { self.layerController.backgroundPaths = [path] }}}
     override func viewDidLoad() {
-        self.imageView.image = hueImage(imageView.bounds.width, imageView.bounds.height)
-//        self.glkView.context = renderer.eaglContext
-//        self.backgroundVideoPath = mp4Path("movie")
-//        self.layerController.backgroundEffect.append(immutable(keepColor))
-//        renderer.render(layerController)
-//        renderer.next()
+//        self.imageView.image = hueImage(imageView.bounds.width, imageView.bounds.height)
+        self.glkView.context = renderer.eaglContext
+        self.backgroundVideoPath = mp4("laser")
+        self.layerController.backgroundEffect.append(immutable(keepColor))
+//        self.layerController.regionLayer.append(videoLayer(mp4("Comp 1")))
+//        self.layerController.regionLayer.append(videoLayer(mp4("Comp 1_2")))
+//        self.layerController.vfx.append(mask(toonLayer(0))(maskLayer: videoLayer(mp4("Comp 1_2"))))
+        self.layerController.vfx.append(toonLayerConcrete(0))
+//        self.layerController.vfx.append(concrete(glassDistortionLayer(mp4("Comp 1")))(backgroundSelector: 1))
+        renderer.render(layerController)
+        renderer.next()
     }
     
-    func mp4Path(name: String) -> String {
+    func mp4(name: String) -> String {
         return NSBundle.mainBundle().pathForResource(name, ofType: "mp4")!
     }
     
-    func mp4(name: String) -> VideoLayer {
-        return VideoLayer(path: mp4Path(name))
-    }
 }

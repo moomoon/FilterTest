@@ -19,73 +19,107 @@ struct MainRenderLayer: RenderLayer {
     func createGraph(context: RenderGraphContext, background: [RenderGraph]) -> RenderGraph {
         var graphs: [RenderGraph] = []
         
-        
+        let backgroundGroup: RenderGraph
         
         if backgroundEffect.count > 0 {
-            graphs.append(RenderGraphGroup(subGraphs: [background[0]] + backgroundEffect))
+            backgroundGroup = RetainGraphGroup(subGraphs: [background[0]] + backgroundEffect, context: context)
         } else {
-            graphs.append(background[0])
+            backgroundGroup = background[0]
         }
+        //this is fed to the vfx layers
+        graphs.append(backgroundGroup)
+        
+        
         if region.0.count > 0 {
-            let regionGroup = RegionGraphGroup(subGraphs: region.0.map{ $0.createGraph(context, background: background)})
-            let addInput = RenderGraphGroup(subGraphs: [regionGroup, immutable(BlendWithMaskAddMask())])
+            //background is not referenced here, just creating mask graphs
+            let regionGroup = sum(region.0.map{ $0.createGraph(context, background: background)})
+            let addInput = combine([regionGroup, immutable(BlendWithMaskAddMask())])
             if(region.1.count > 0){
-                let backgroundFiltered = RenderGraphGroup(subGraphs: [background[0]] + region.1)
-                graphs.append(RenderGraphGroup(subGraphs: [backgroundFiltered, addInput]))
+                graphs.append(combine([combine([background[0]] + region.1), addInput]))
             } else {
-                graphs.append(RenderGraphGroup(subGraphs: [background[0], addInput]))
+                graphs.append(combine([background[0], addInput]))
             }
         }
         
-        
-        
-        vfx.map{graphs.append($0.createGraph(context, background: background))}
-        return RenderGraphGroup(subGraphs: graphs)
+        vfx.map{graphs.append($0.createGraph(context, background: [background[0], backgroundGroup]))}
+        return combine(graphs)
     }
 }
 
-struct VideoLayer: RenderLayer {
-    let path: String
+func layer(delegate: (RenderGraphContext, [RenderGraph]) -> RenderGraph) -> RenderLayer {
+    return DelegateLayer(delegate: delegate)
+}
+
+
+struct DelegateLayer: RenderLayer {
+    let delegate: (RenderGraphContext, [RenderGraph]) -> RenderGraph
     func createGraph(context: RenderGraphContext, background: [RenderGraph]) -> RenderGraph {
-        let generator = VideoGenerator(path: path, synced: context.syncManager.newSynced())
-        context.updateManager.registerUpdatable(generator)
-        return generator
+        return delegate(context, background)
     }
 }
 
-struct MultiplyVideoLayer: RenderLayer {
-    let path0: String
-    let path1: String
-    func createGraph(context: RenderGraphContext, background: [RenderGraph]) -> RenderGraph {
-        let generator0 = VideoGenerator(path: path0, synced: context.syncManager.newSynced())
-        context.updateManager.registerUpdatable(generator0)
-        let generator1 = VideoGenerator(path: path1, synced: context.syncManager.newSynced())
-        context.updateManager.registerUpdatable(generator1)
-        let multiply = RenderGraphGroup(subGraphs: [generator0, immutable(MultiplyCompositingAddInput())])
-        return RenderGraphGroup(subGraphs: [generator1, multiply])
+func concrete(overlay: RenderLayer)(backgroundSelector: Int) -> RenderLayer{
+    return layer{ combine($1[backgroundSelector], overlay.createGraph($0, background: $1))}
+}
+
+
+func toonLayerConcrete(backgroundSelector: Int) -> RenderLayer {
+    return layer {
+        let forEdge = combine($0.1[backgroundSelector], immutable(gaussian(1)), immutable(posterize(3)), immutable(colorControls))
+        let posterized = combine($0.1[backgroundSelector], immutable(posterize(5)), immutable(colorControls))
+        return multiplyConcrete(monoEdge(forEdge)(level: 1))(rhs: posterized)
     }
 }
 
-struct NormalLayer: RenderLayer {
-    let backgroundPath: String
-    let maskPath: String
-    func createGraph(context: RenderGraphContext, background: [RenderGraph]) -> RenderGraph {
-        let backgroundGenerator = VideoGenerator(path: backgroundPath, synced: context.syncManager.newSynced())
-        let maskGenerator = VideoGenerator(path: maskPath, synced: context.syncManager.newSynced())
-        context.updateManager.registerUpdatable(backgroundGenerator)
-        context.updateManager.registerUpdatable(maskGenerator)
-        let maskGraph = RenderGraphGroup(subGraphs: [maskGenerator, immutable(BlendWithMaskAddMask())])
-        return RenderGraphGroup(subGraphs: [backgroundGenerator, maskGraph])
-    }
+//func glassDistortionLayerConcrete(inputPath: String)(backgroundSelector: Int) -> RenderLayer {
+//    return layer { combine($0.1[backgroundSelector], glassDistortion(video(inputPath, $0.0)))}
+//}
+
+
+func videoLayer(path: String) -> RenderLayer {
+    return layer{video(path, $0.0)}
 }
 
-struct RegionGraphGroup: RenderGraph {
+func glassDistortionLayer(inputPath: String) -> RenderLayer {
+    return layer{glassDistortion(video(inputPath, $0.0))}
+}
+
+
+func normalLayer(backgroundPath: String, maskPath: String) -> RenderLayer {
+    return layer { mask(video(backgroundPath, $0.0))(mask: video(maskPath, $0.0)) }
+}
+
+func multiplyLayer(path: String) -> RenderLayer {
+    return layer{ multiply(video(path, $0.0))}
+}
+
+
+func mask(inputLayer: RenderLayer)(maskLayer: RenderLayer) -> RenderLayer {
+    return layer {mask(inputLayer.createGraph($0, background: $1))(mask: maskLayer.createGraph($0, background: $1))}
+}
+
+
+class RetainGraphGroup: RenderGraph, Syncable, Updatable {
+    let synced: Synced
     let subGraphs: [RenderGraph]
-    var filter: Filter { return RegionGraphGroup.reduceFilters(subGraphs.map{$0.filter})}
-    static func reduceFilters(layers: [Filter]) -> ConcreteFilter{
-        let concreteFilters = layers.map{$0 as! ConcreteFilter}
-        if concreteFilters.count < 2 { return concreteFilters[0] }
-        let flatten = concreteFilters[0..<1] + concreteFilters[1..<concreteFilters.count].map{FilterGroup.reduceFilters([$0, AdditionFilterAddInput()])}
-        return FilterGroup.reduceFilters(Array(flatten.map{ $0 as Filter }))
+    init(subGraphs: [RenderGraph], context: RenderGraphContext){
+        self.subGraphs = subGraphs
+        self.synced = context.syncManager.newSynced()
+        context.updateManager.registerUpdatable(self)
     }
+    private var _filter: Filter? = nil
+    var filter: Filter {
+        if let f = self._filter { return f }
+        let f = subGraphs / { $0.filter }
+        self._filter = f
+        return f
+    }
+    func update() {
+        self._filter = nil
+        self.synced.notifyUpdated()
+    }
+}
+
+func sum(graphs: [RenderGraph]) -> RenderGraph {
+    return delegateGraphGroup(graphs, sum)
 }

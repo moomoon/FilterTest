@@ -10,6 +10,16 @@ import Foundation
 import CoreImage
 
 
+struct DelegateFilter: Filter {
+    let delegate: (ConcreteFilter) -> ConcreteFilter
+    func filter(filter: ConcreteFilter) -> ConcreteFilter {
+        return delegate(filter)
+    }
+}
+
+func delegateFilter(delegate: (ConcreteFilter) -> ConcreteFilter) -> Filter {
+    return DelegateFilter(delegate: delegate)
+}
 
 struct SimpleEffectFilter: EffectFilter{
     let filter: CIFilter
@@ -36,15 +46,37 @@ struct SimpleKernelFilter: EffectFilter {
     }
 }
 
-func immutable<T: Filter>(filter: T) -> RenderGraph{
+func immutable(filter: Filter...) -> RenderLayer {
+    return layer {combine([$0.1[0]] + filter.map{immutable($0)})}
+}
+
+func immutable(filter: Filter) -> RenderGraph {
     return ImmutableGraph(filter: filter)
 }
 
-func immutable<T: Filter>(filter: () -> T) -> RenderGraph{
-    return ImmutableGraph(filter: filter())
-}
 func immutable(filter: () -> Filter) -> RenderGraph {
-    return ImmutableGraph(filter: filter())
+    return immutable(filter())
+}
+
+
+var colorControls: Filter {
+    let filter = SimpleEffectFilter(name: "CIColorControls")
+    filter.filter.setValue(0.03, forKey: kCIInputBrightnessKey)
+    return filter
+}
+
+func saturation(sat: CGFloat) -> SimpleEffectFilter {
+    let filter = colorControls as! SimpleEffectFilter
+    filter.filter.setValue(sat, forKey:kCIInputSaturationKey)
+    return filter
+}
+
+
+
+var exposureAdjust: Filter {
+    let filter = SimpleEffectFilter(name: "CIExposureAdjust")
+    filter.filter.setValue(1.0, forKey: kCIInputEVKey)
+    return filter
 }
 
 var invert: Filter {
@@ -88,9 +120,21 @@ var vignetteEffect: Filter {
     return SimpleEffectFilter(name: "CIVignetteEffect")
 }
 
+var posterize: Filter {
+    let filter = SimpleEffectFilter(name: "CIColorPosterize")
+//    filter.filter.setValue(1.0, forKey: "inputLevels")
+    return filter
+}
+
+var gaussian: Filter {
+    let filter = SimpleEffectFilter(name: "CIGaussianBlur")
+    filter.filter.setValue(2.0, forKey: kCIInputRadiusKey)
+    return filter
+}
+
 var edges: Filter {
     let filter = SimpleEffectFilter(name: "CIEdges")
-    filter.filter.setValue(3.0, forKey: kCIInputIntensityKey)
+    filter.filter.setValue(20.0, forKey: kCIInputIntensityKey)
     return filter
 }
 
@@ -98,8 +142,26 @@ var edgeWork: Filter {
     return SimpleEffectFilter(name: "CIEdgeWork")
 }
 
-func keepColor() -> Filter {
+var keepColor: Filter {
     return SimpleKernelFilter(kernel: ciKernelKeepColor)
+}
+
+var colorClamp: Filter {
+    let filter = SimpleEffectFilter(name: "CIColorClamp")
+    filter.filter.setValue(CIVector(x: 0.01, y: 0.01, z: 0.01, w: 0), forKey: "inputMinComponents")
+    return filter
+}
+
+func posterize(levels: CGFloat) -> SimpleEffectFilter {
+    let filter = SimpleEffectFilter(name: "CIColorPosterize")
+    filter.filter.setValue(levels, forKey: "inputLevels")
+    return filter
+}
+
+func gaussian(radius: CGFloat) -> SimpleEffectFilter {
+    let filter = SimpleEffectFilter(name: "CIGaussianBlur")
+    filter.filter.setValue(radius, forKey: kCIInputRadiusKey)
+    return filter
 }
 
 struct MaskToAlphaFilter: EffectFilter {
@@ -112,6 +174,7 @@ struct MaskToAlphaFilter: EffectFilter {
         return filter.outputImage
     }
 }
+
 
 struct BlendWithAlphaFilterAddMask: Filter {
     func filter(filter: ConcreteFilter) -> ConcreteFilter {
@@ -143,6 +206,24 @@ struct BlendWithAlphaFliter: BlendFilter {
     }
 }
 
+
+func glassDistortionAddTexture() -> Filter {
+    return delegateFilter{return GlassDistortion(outputImage: $0.outputImage)}
+}
+
+
+struct GlassDistortion: BlendFilter {
+    let outputImage: CIImage
+    let filter = CIFilter (name: "CIGlassDistortion")!
+    func filter(filter: ConcreteFilter) -> ConcreteFilter {
+        return ConcreteImage(outputImage: blend(filter.outputImage, overlay: outputImage))
+    }
+    func blend(background: CIImage, overlay: CIImage) -> CIImage {
+        filter.setValue(background , forKey: kCIInputImageKey)
+        filter.setValue(overlay, forKey: "inputTexture")
+        return filter.outputImage
+    }
+}
 
 struct MultiplyCompositingAddInput: Filter{
     func filter(filter: ConcreteFilter) -> ConcreteFilter {
@@ -233,6 +314,15 @@ struct DummyFilter: ConcreteFilter{
     }
 }
 
+
+func sum(filters: [Filter]) -> ConcreteFilter {
+    var interpolated = [filters[0]]
+    if filters.count > 1 {
+        let add = AdditionFilterAddInput()
+        filters[1..<filters.count].map{interpolated.append(add.filter($0 as! ConcreteFilter))}
+    }
+    return FilterGroup.reduceFilters(interpolated)
+}
 
 
 

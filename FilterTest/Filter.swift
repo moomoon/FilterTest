@@ -34,7 +34,7 @@ struct FilterGroup: ConcreteFilter {
             result = filters[1 ..< filters.count].reduce(filters.first as! ConcreteFilter){$1.filter($0)}
         }
         log += " -> \(result)"
-        println(log)
+//        println(log)
         return result
     }
 }

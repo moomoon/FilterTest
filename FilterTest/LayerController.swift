@@ -9,9 +9,9 @@
 import Foundation
 
 class LayerController {
-    var backgroundPaths: [String] = []{ didSet{ _background = backgroundPaths.map{ VideoLayer(path: $0)}}}
-    private var _background: [VideoLayer] = []
-    var background: [RenderLayer] {return _background.map{$0 as RenderLayer} }
+    var backgroundPaths: [String] = []{ didSet{ _background = backgroundPaths.map{ videoLayer($0)}}}
+    private var _background: [RenderLayer] = []
+    var background: [RenderLayer] {return _background }
     var backgroundEffect: [RenderGraph] = []
     var regionLayer: [RenderLayer] = []
     var regionEffect: [RenderGraph] = []
