@@ -80,13 +80,25 @@ func videoLayer(path: String) -> RenderLayer {
     return layer{video(path, $0.0)}
 }
 
+func glassDistortionLayerConcrete(dewMask: String, solidMask: String, backgroundSelector: Int) -> RenderLayer {
+    return layer{
+        let dewVideo = video(dewMask, $0.0)
+        let solidVideo = video(solidMask, $0.0)
+        let background = $0.1[backgroundSelector]
+        let blur = combine(background, immutable(gaussian(10)))
+        let dew = glassDistortion(background)(texture: dewVideo)
+        let solidGraph = mask(blur)(input: background)(maskLayer: solidVideo)
+        return mask(solidGraph)(input: dew)(maskLayer: dewVideo)
+    }
+}
+
 func glassDistortionLayer(inputPath: String) -> RenderLayer {
     return layer{glassDistortion(video(inputPath, $0.0))}
 }
 
 
 func normalLayer(backgroundPath: String, maskPath: String) -> RenderLayer {
-    return layer { mask(video(backgroundPath, $0.0))(mask: video(maskPath, $0.0)) }
+    return layer { mask(video(backgroundPath, $0.0))(maskLayer: video(maskPath, $0.0)) }
 }
 
 func multiplyLayer(path: String) -> RenderLayer {
@@ -95,8 +107,14 @@ func multiplyLayer(path: String) -> RenderLayer {
 
 
 func mask(inputLayer: RenderLayer)(maskLayer: RenderLayer) -> RenderLayer {
-    return layer {mask(inputLayer.createGraph($0, background: $1))(mask: maskLayer.createGraph($0, background: $1))}
+    return layer {mask(inputLayer.createGraph($0, background: $1))(maskLayer: maskLayer.createGraph($0, background: $1))}
 }
+
+//func mask(backgroundLayer: RenderLayer, inputLayer: RenderLayer, maskLayer: RenderLayer) -> RenderLayer {
+//    return layer {
+//        
+//    }
+//}
 
 
 class RetainGraphGroup: RenderGraph, Syncable, Updatable {

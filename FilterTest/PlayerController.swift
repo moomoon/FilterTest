@@ -24,8 +24,10 @@ class PlayerController: GLKViewController {
 //        self.layerController.regionLayer.append(videoLayer(mp4("Comp 1")))
 //        self.layerController.regionLayer.append(videoLayer(mp4("Comp 1_2")))
 //        self.layerController.vfx.append(mask(toonLayer(0))(maskLayer: videoLayer(mp4("Comp 1_2"))))
-        self.layerController.vfx.append(toonLayerConcrete(0))
-//        self.layerController.vfx.append(concrete(glassDistortionLayer(mp4("Comp 1")))(backgroundSelector: 1))
+//        self.layerController.vfx.append(toonLayerConcrete(0))
+//        self.layerController.vfx.append(concrete(glassDistortionLayer(mp4("Comp 1_2")))(backgroundSelector: 1))
+//        self.layerController.vfx.append(glassDistortionLayerConcrete(mp4("Comp 1_2"), mp4("Comp 1_1"), 0))
+        self.layerController.vfx.append(glassDistortionLayer(mp4("Comp 1_2")))
         renderer.render(layerController)
         renderer.next()
     }

@@ -156,12 +156,24 @@ func monoEdge(graph: RenderGraph)(level: Int) -> RenderGraph {
     return [0...level].reduce(monoEdge(graph)){multiplyConcrete(monoEdge($0.0))(rhs: $0.0)}
 }
 
-func glassDistortion(input: RenderGraph) -> RenderGraph {
-    return combine(input, immutable(glassDistortionAddTexture()))
+func glassDistortion(texture: RenderGraph) -> RenderGraph {
+    return combine(texture, immutable(glassDistortionAddTexture()))
 }
 
-func mask(input: RenderGraph)(mask: RenderGraph) -> RenderGraph {
-    return combine(input, combine(mask, immutable(BlendWithMaskAddMask())))
+func glassDistortion(background: RenderGraph)(texture: RenderGraph) -> RenderGraph {
+    return combine(background, glassDistortion(texture))
+}
+
+func mask(maskLayer: RenderGraph) -> RenderGraph {
+    return combine(maskLayer, immutable(BlendWithMaskAddMask()))
+}
+
+func mask(input: RenderGraph)(maskLayer: RenderGraph) -> RenderGraph {
+    return combine(input, mask(maskLayer))
+}
+
+func mask(background: RenderGraph)(input: RenderGraph)(maskLayer: RenderGraph) -> RenderGraph {
+    return combine(background, mask(input)(maskLayer: maskLayer))
 }
 
 func multiply(graph: RenderGraph) -> RenderGraph {

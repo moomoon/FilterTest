@@ -17,7 +17,6 @@
 		976762221B4FC8E3001C34D5 /* knHueImage.cikl in Resources */ = {isa = PBXBuildFile; fileRef = 976762211B4FC8E3001C34D5 /* knHueImage.cikl */; };
 		97D4AAED1B536D4600B8AA78 /* laser.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97D4AAEC1B536D4600B8AA78 /* laser.mp4 */; };
 		97EAE72A1B4F772300E45146 /* CoreImageKernels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97EAE7291B4F772300E45146 /* CoreImageKernels.swift */; };
-		97F16F1B1B4E12220038236E /* default.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 97F16F1A1B4E12220038236E /* default.jpg */; };
 		97F16F1E1B4E162C0038236E /* mask.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97F16F1C1B4E162C0038236E /* mask.mp4 */; };
 		97F16F1F1B4E162C0038236E /* movie.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97F16F1D1B4E162C0038236E /* movie.mp4 */; };
 		97F16F231B4E40020038236E /* Comp 1_2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97F16F201B4E3F360038236E /* Comp 1_2.mp4 */; };
@@ -79,7 +78,6 @@
 		976762211B4FC8E3001C34D5 /* knHueImage.cikl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = knHueImage.cikl; sourceTree = "<group>"; };
 		97D4AAEC1B536D4600B8AA78 /* laser.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = laser.mp4; sourceTree = "<group>"; };
 		97EAE7291B4F772300E45146 /* CoreImageKernels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreImageKernels.swift; sourceTree = "<group>"; };
-		97F16F1A1B4E12220038236E /* default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = default.jpg; path = ../../../Downloads/default.jpg; sourceTree = "<group>"; };
 		97F16F1C1B4E162C0038236E /* mask.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = mask.mp4; sourceTree = "<group>"; };
 		97F16F1D1B4E162C0038236E /* movie.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = movie.mp4; sourceTree = "<group>"; };
 		97F16F201B4E3F360038236E /* Comp 1_2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Comp 1_2.mp4"; sourceTree = "<group>"; };
@@ -176,7 +174,6 @@
 				97F6D65B1B4CB8D20053BFFE /* Images.xcassets */,
 				97F6D65D1B4CB8D20053BFFE /* LaunchScreen.xib */,
 				97F6D6781B4CBCDA0053BFFE /* FilterImpl.swift */,
-				97F16F1A1B4E12220038236E /* default.jpg */,
 				97F6D6891B4D023F0053BFFE /* RenderLayer.swift */,
 				97F6D6521B4CB8D10053BFFE /* Supporting Files */,
 				97F6D6741B4CB9030053BFFE /* Filter.swift */,
@@ -319,7 +316,6 @@
 				97F6D65C1B4CB8D20053BFFE /* Images.xcassets in Resources */,
 				9767621A1B4F9B8C001C34D5 /* knExposure.cikl in Resources */,
 				97F16F1E1B4E162C0038236E /* mask.mp4 in Resources */,
-				97F16F1B1B4E12220038236E /* default.jpg in Resources */,
 				976762161B4F9B00001C34D5 /* HSV2RGB.cikl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
