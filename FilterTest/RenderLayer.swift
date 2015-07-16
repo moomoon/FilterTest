@@ -7,6 +7,10 @@
 //
 
 import Foundation
+import CoreImage
+import Argo
+import ReactiveCocoa
+import Curry
 
 protocol RenderLayer {
     func createGraph(context: RenderGraphContext, background: [RenderGraph]) -> RenderGraph
@@ -33,11 +37,10 @@ struct MainRenderLayer: RenderLayer {
         if region.0.count > 0 {
             //background is not referenced here, just creating mask graphs
             let regionGroup = sum(region.0.map{ $0.createGraph(context, background: background)})
-            let addInput = combine([regionGroup, immutable(BlendWithMaskAddMask())])
             if(region.1.count > 0){
-                graphs.append(combine([combine([background[0]] + region.1), addInput]))
+                graphs.append(curry <| mask <| combine([background[0]] + region.1) <| regionGroup)
             } else {
-                graphs.append(combine([background[0], addInput]))
+                graphs.append(curry <| mask <| background[0] <| regionGroup)
             }
         }
         
@@ -59,21 +62,18 @@ struct DelegateLayer: RenderLayer {
 }
 
 func concrete(overlay: RenderLayer)(backgroundSelector: Int) -> RenderLayer{
-    return layer{ combine($1[backgroundSelector], overlay.createGraph($0, background: $1))}
+    return layer{ overlay.createGraph($0, background: $1) <| $1[backgroundSelector] }
 }
 
 
 func toonLayerConcrete(backgroundSelector: Int) -> RenderLayer {
     return layer {
-        let forEdge = combine($0.1[backgroundSelector], immutable(gaussian(1)), immutable(posterize(3)), immutable(colorControls))
-        let posterized = combine($0.1[backgroundSelector], immutable(posterize(5)), immutable(colorControls))
-        return multiplyConcrete(monoEdge(forEdge)(level: 1))(rhs: posterized)
+        let forEdge = $0.1[backgroundSelector] |> gaussian(1) |> posterize(3) |> colorControls
+        let posterized = $0.1[backgroundSelector] |> posterize(5) |> colorControls
+        return multiply <| (monoEdge <| 1 <| forEdge) <| posterized
     }
 }
 
-//func glassDistortionLayerConcrete(inputPath: String)(backgroundSelector: Int) -> RenderLayer {
-//    return layer { combine($0.1[backgroundSelector], glassDistortion(video(inputPath, $0.0)))}
-//}
 
 
 func videoLayer(path: String) -> RenderLayer {
@@ -85,37 +85,35 @@ func glassDistortionLayerConcrete(dewMask: String, solidMask: String, background
         let dewVideo = video(dewMask, $0.0)
         let solidVideo = video(solidMask, $0.0)
         let background = $0.1[backgroundSelector]
-        let blur = combine(background, immutable(gaussian(10)))
-        let dew = glassDistortion(background)(texture: dewVideo)
-        let solidGraph = mask(blur)(input: background)(maskLayer: solidVideo)
-        return mask(solidGraph)(input: dew)(maskLayer: dewVideo)
+        let blur = gaussian <| 10 <| background
+        let dew = glassDistortion <| background <| dewVideo
+        let solidGraph = curry <| mask <| background <| solidVideo <| blur
+        return curry <| mask <| dew <| dewVideo <| solidGraph
     }
 }
 
+
+func maskedBlurLayer(maskPath: String) -> RenderLayer {
+    return layer{ maskedBlur <| video(maskPath, $0.0) }
+}
+
 func glassDistortionLayer(inputPath: String) -> RenderLayer {
-    return layer{glassDistortion(video(inputPath, $0.0))}
+    return layer{ glassDistortion <| video(inputPath, $0.0)}
 }
 
 
-func normalLayer(backgroundPath: String, maskPath: String) -> RenderLayer {
-    return layer { mask(video(backgroundPath, $0.0))(maskLayer: video(maskPath, $0.0)) }
+func normalLayer(inputPath: String, maskPath: String) -> RenderLayer {
+    return layer{ curry <| mask <| video(inputPath, $0.0) <| video(maskPath, $0.0) }
 }
 
 func multiplyLayer(path: String) -> RenderLayer {
-    return layer{ multiply(video(path, $0.0))}
+    return layer{ multiply <| video(path, $0.0) }
 }
 
 
 func mask(inputLayer: RenderLayer)(maskLayer: RenderLayer) -> RenderLayer {
-    return layer {mask(inputLayer.createGraph($0, background: $1))(maskLayer: maskLayer.createGraph($0, background: $1))}
+    return layer { curry <| mask <| inputLayer.createGraph($0, background: $1) <| maskLayer.createGraph($0, background: $1) }
 }
-
-//func mask(backgroundLayer: RenderLayer, inputLayer: RenderLayer, maskLayer: RenderLayer) -> RenderLayer {
-//    return layer {
-//        
-//    }
-//}
-
 
 class RetainGraphGroup: RenderGraph, Syncable, Updatable {
     let synced: Synced

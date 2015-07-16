@@ -10,6 +10,8 @@ import Foundation
 import Box
 import AVFoundation
 import CoreImage
+import Argo
+import ReactiveCocoa
 
 class Renderer {
     private var renderGraph: RenderGraph? = nil {
@@ -17,14 +19,21 @@ class Renderer {
             renderGraphContext.onSynchronize = {
                 // draw here
                 println("**********************")
+                let startComp = NSDate.timeIntervalSinceReferenceDate()
                 if let ciImage = (self.renderGraph?.filter as? ConcreteFilter)?.outputImage {
+                    let startRender = NSDate.timeIntervalSinceReferenceDate()
+                    println("composing filter cost \(startRender - startComp)")
                     self.ciContext.drawImage(ciImage, inRect: ciImage.extent(), fromRect: ciImage.extent())
-                    
+                    let finishRender = NSDate.timeIntervalSinceReferenceDate()
+                    println("render cost \(finishRender - startRender)")
+                    println("total frame time \(finishRender - self.t)")
+                    self.t = finishRender
                 }
                 self.onDraw?()
             }
         }
     }
+    private var t = NSDate.timeIntervalSinceReferenceDate()
     private let renderGraphContext: RenderGraphContext
     let eaglContext: EAGLContext
     private let ciContext: CIContext
@@ -35,7 +44,8 @@ class Renderer {
         self.renderGraphContext = context
         let eaglContext = EAGLContext(API: EAGLRenderingAPI.OpenGLES2)
         eaglContext.multiThreaded = true
-        let ciContext = CIContext(EAGLContext: eaglContext)
+        let option = [kCIContextWorkingColorSpace: NSNull.new()]
+        let ciContext = CIContext(EAGLContext: eaglContext, options: option)
         self.eaglContext = eaglContext
         self.ciContext = ciContext
     }
@@ -55,9 +65,6 @@ class Renderer {
     }
     
 }
-
-
-
 
 class VideoGenerator: SimpleUpdatable, Syncable, RenderGraph {
     static let DecodeOptions = [kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA]
@@ -124,9 +131,6 @@ func video(path: String, context: RenderGraphContext) -> RenderGraph {
     return gen
 }
 
-
-
-
 protocol RenderGraph {
     var filter: Filter { get }
 }
@@ -148,44 +152,90 @@ func combine(subGraphs: [RenderGraph]) -> RenderGraph{
     return DelegateGraphGroup(subGraphs: subGraphs, delegate: FilterGroup.reduceFilters)
 }
 
-func combine(graphs: RenderGraph...) -> RenderGraph {
-    return combine(graphs)
+func combine(a: RenderGraph)(_ b: RenderGraph) -> RenderGraph{
+    return combine([b, a])
 }
 
-func monoEdge(graph: RenderGraph)(level: Int) -> RenderGraph {
-    return [0...level].reduce(monoEdge(graph)){multiplyConcrete(monoEdge($0.0))(rhs: $0.0)}
+func <| <F, T>(lhs: F -> T, rhs: F) ->T {
+    return lhs(rhs)
+}
+
+func <| <A, B, C>(lhs: B -> C, rhs: A -> B) -> A -> C{
+    return { lhs(rhs($0)) }
+}
+
+func <| (lhs: RenderGraph, rhs: RenderGraph) -> RenderGraph{
+    return combine <| lhs <| rhs
+}
+
+func <| (lhs: Filter, rhs: RenderGraph) -> RenderGraph {
+    return immutable <| lhs <| rhs
+}
+
+
+func <| <A> (lhs: RenderGraph, rhs: A -> RenderGraph) -> A -> RenderGraph{
+    return { lhs <| rhs($0)}
+}
+
+func <| <A> (lhs: Filter, rhs: A -> RenderGraph) -> A -> RenderGraph{
+    return {lhs <| rhs($0)}
+}
+
+//func <| <A> (lhs: Filter, rhs: A -> Filter) -> A -> RenderGraph{
+//    return {lhs <| rhs($0)}
+//}
+//
+//func <| <A> (lhs: RenderGraph, rhs: A -> Filter) -> A -> RenderGraph{
+//    return {lhs <| rhs($0)}
+//}
+//
+func |> <F, T> (lhs: F, rhs: F -> T) -> T {
+    return rhs(lhs)
+}
+
+func |> <A, B, C> (lhs: A -> B, rhs: B -> C) -> A -> C {
+    return { rhs(lhs($0)) }
+}
+
+func |> (lhs: RenderGraph, rhs: RenderGraph) -> RenderGraph {
+    return combine <| rhs <| lhs
+}
+
+func |> (lhs: RenderGraph, rhs: Filter) -> RenderGraph {
+    return immutable <| rhs <| lhs
+}
+
+
+
+
+
+
+
+
+
+func monoEdge(level: Int)(graph: RenderGraph) -> RenderGraph {
+    return [0...level].reduce(monoEdge(graph)){ multiply <| monoEdge <| $0.0 <| $0.0 }
 }
 
 func glassDistortion(texture: RenderGraph) -> RenderGraph {
-    return combine(texture, immutable(glassDistortionAddTexture()))
+    return pInput("CIGlassDistortion","inputTexture") <| texture
 }
 
-func glassDistortion(background: RenderGraph)(texture: RenderGraph) -> RenderGraph {
-    return combine(background, glassDistortion(texture))
-}
-
-func mask(maskLayer: RenderGraph) -> RenderGraph {
-    return combine(maskLayer, immutable(BlendWithMaskAddMask()))
-}
-
-func mask(input: RenderGraph)(maskLayer: RenderGraph) -> RenderGraph {
-    return combine(input, mask(maskLayer))
-}
-
-func mask(background: RenderGraph)(input: RenderGraph)(maskLayer: RenderGraph) -> RenderGraph {
-    return combine(background, mask(input)(maskLayer: maskLayer))
+func mask(input: RenderGraph, mask: RenderGraph) -> RenderGraph {
+    return pBackground("CIBlendWithMask", kCIInputImageKey, kCIInputMaskImageKey) <| input <| mask
 }
 
 func multiply(graph: RenderGraph) -> RenderGraph {
-    return combine(graph, immutable(MultiplyCompositingAddInput()))
-}
-
-func multiplyConcrete (lhs: RenderGraph)(rhs: RenderGraph) -> RenderGraph {
-    return combine(lhs, multiply(rhs))
+    return pBackground("CIMultiplyCompositing", kCIInputImageKey) <| graph
 }
 
 func monoEdge(graph: RenderGraph) -> RenderGraph {
-    return combine(graph, immutable(edges), immutable(mono), immutable(invert))
+    return graph |> edges |> mono |> invert
+}
+
+
+func maskedBlur(mask: RenderGraph) -> RenderGraph {
+    return maskedBlur() <| mask
 }
 
 
@@ -200,7 +250,14 @@ class RenderGraphContext{
     init(){
         let onSynchronized = MutableBox<(() -> Void)?>(nil)
         let updateManager = UpdateManager()
-        let syncManager = SynchronizedUpon{ onSynchronized.value?(); updateManager.next()}
+        var t = NSDate.timeIntervalSinceReferenceDate()
+        let syncManager = SynchronizedUpon{
+            let finishDecode = NSDate.timeIntervalSinceReferenceDate()
+            println("decode cost \(finishDecode - t)")
+            onSynchronized.value?()
+            t = NSDate.timeIntervalSinceReferenceDate()
+            updateManager.next()
+        }
         self.updateManager = updateManager
         self.syncManager = syncManager
         self._onSynchronized = onSynchronized

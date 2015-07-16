@@ -9,6 +9,7 @@
 import Foundation
 import GLKit
 import CoreImage
+import Argo
 
 class PlayerController: GLKViewController {
     @IBOutlet weak var glkView: GLKView!
@@ -20,15 +21,19 @@ class PlayerController: GLKViewController {
 //        self.imageView.image = hueImage(imageView.bounds.width, imageView.bounds.height)
         self.glkView.context = renderer.eaglContext
         self.backgroundVideoPath = mp4("laser")
-        self.layerController.backgroundEffect.append(immutable(keepColor))
-//        self.layerController.regionLayer.append(videoLayer(mp4("Comp 1")))
+//        self.layerController.backgroundEffect.append(immutable <| boxBlur())
+//        layerController.backgroundEffect.append <| immutable <| gaussian()
+//        layerController.regionLayer.append <| videoLayer <| mp4 <| "Comp 1_2"
+//        self.layerController.regionEffect.append(immutable(boxBlur(20)))
 //        self.layerController.regionLayer.append(videoLayer(mp4("Comp 1_2")))
 //        self.layerController.vfx.append(mask(toonLayer(0))(maskLayer: videoLayer(mp4("Comp 1_2"))))
 //        self.layerController.vfx.append(toonLayerConcrete(0))
+//        self.layerController.vfx.append(maskedBlurLayer(mp4("Comp 1_2")))
+//        self.layerController.vfx.append(normalLayer(mp4("Comp 1_1"), mp4("Comp 1_2")))
 //        self.layerController.vfx.append(concrete(glassDistortionLayer(mp4("Comp 1_2")))(backgroundSelector: 1))
 //        self.layerController.vfx.append(glassDistortionLayerConcrete(mp4("Comp 1_2"), mp4("Comp 1_1"), 0))
-        self.layerController.vfx.append(glassDistortionLayer(mp4("Comp 1_2")))
-        renderer.render(layerController)
+//        self.layerController.vfx.append(glassDistortionLayer(mp4("Comp 1_2")))
+        renderer.render <| layerController
         renderer.next()
     }
     

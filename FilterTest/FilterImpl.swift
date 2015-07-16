@@ -120,18 +120,6 @@ var vignetteEffect: Filter {
     return SimpleEffectFilter(name: "CIVignetteEffect")
 }
 
-var posterize: Filter {
-    let filter = SimpleEffectFilter(name: "CIColorPosterize")
-//    filter.filter.setValue(1.0, forKey: "inputLevels")
-    return filter
-}
-
-var gaussian: Filter {
-    let filter = SimpleEffectFilter(name: "CIGaussianBlur")
-    filter.filter.setValue(2.0, forKey: kCIInputRadiusKey)
-    return filter
-}
-
 var edges: Filter {
     let filter = SimpleEffectFilter(name: "CIEdges")
     filter.filter.setValue(20.0, forKey: kCIInputIntensityKey)
@@ -152,14 +140,26 @@ var colorClamp: Filter {
     return filter
 }
 
-func posterize(levels: CGFloat) -> SimpleEffectFilter {
+func posterize(levels: CGFloat) -> Filter {
     let filter = SimpleEffectFilter(name: "CIColorPosterize")
     filter.filter.setValue(levels, forKey: "inputLevels")
     return filter
 }
 
-func gaussian(radius: CGFloat) -> SimpleEffectFilter {
+func gaussian(_ radius: CGFloat = 10) -> Filter {
     let filter = SimpleEffectFilter(name: "CIGaussianBlur")
+    filter.filter.setValue(radius, forKey: kCIInputRadiusKey)
+    return filter
+}
+
+func boxBlur(_ radius: CGFloat = 10) -> Filter {
+    let filter = SimpleEffectFilter(name: "CIBoxBlur")
+    filter.filter.setValue(radius, forKey: kCIInputRadiusKey)
+    return filter
+}
+
+func discBlur(radius: CGFloat = 8) -> Filter {
+    let filter = SimpleEffectFilter(name: "CIDiscBlur")
     filter.filter.setValue(radius, forKey: kCIInputRadiusKey)
     return filter
 }
@@ -206,24 +206,62 @@ struct BlendWithAlphaFliter: BlendFilter {
     }
 }
 
-
-func glassDistortionAddTexture() -> Filter {
-    return delegateFilter{return GlassDistortion(outputImage: $0.outputImage)}
+func maskedBlur(_ radius: CGFloat = 5) -> PendingFilter {
+    let filter = pInput("CIMaskedVariableBlur", "inputMask")
+    filter.filter.setValue(radius, forKey: kCIInputRadiusKey)
+    return filter
 }
 
+//struct MaskedBlurAddMask: Filter {
+//    func filter(filter: ConcreteFilter) -> ConcreteFilter {
+//        return MaskedBlurFilter(outputImage: filter.outputImage)
+//    }
+//}
+//
+//struct MaskedBlurFilter: ConcreteFilter {
+//    let outputImage: CIImage
+//    let filter = CIFilter(name: "CIMaskedVariableBlur")!
+//    func filter(filter: ConcreteFilter) -> ConcreteFilter {
+//        self.filter.setValue(self.outputImage, forKey: "inputMask")
+//        self.filter.setValue(filter.outputImage, forKey: kCIInputImageKey)
+////        self.filter.setValue(20, forKey: kCIInputRadiusKey)
+//        return ConcreteImage(outputImage: self.filter.outputImage)
+//    }
+//}
 
-struct GlassDistortion: BlendFilter {
-    let outputImage: CIImage
-    let filter = CIFilter (name: "CIGlassDistortion")!
+struct PendingFilter: ConcreteFilter {
+    let outputImage: CIImage = CIImage.emptyImage()
+    let filter: CIFilter
+    let pendingArgs: [String]
+    init(_ name: String, _ args: [String]){
+        self.init(CIFilter(name: name), args)
+    }
+    init(_ name: String, _ args: String...){
+        self.init(name, args)
+    }
+    private init(_ filter: CIFilter, _ args: [String]){
+        self.filter = filter
+        self.pendingArgs = args
+    }
     func filter(filter: ConcreteFilter) -> ConcreteFilter {
-        return ConcreteImage(outputImage: blend(filter.outputImage, overlay: outputImage))
-    }
-    func blend(background: CIImage, overlay: CIImage) -> CIImage {
-        filter.setValue(background , forKey: kCIInputImageKey)
-        filter.setValue(overlay, forKey: "inputTexture")
-        return filter.outputImage
+        if let first = pendingArgs.first{
+            self.filter.setValue(filter.outputImage, forKey: first)
+            println("add arg \(first)")
+        }
+        return pendingArgs.count > 1 ?
+            PendingFilter(self.filter, Array(pendingArgs[1 ..< pendingArgs.count]))
+            : ConcreteImage(outputImage: self.filter.outputImage)
     }
 }
+
+func pInput(name: String, args: String...) -> PendingFilter{
+    return PendingFilter(name, args + [kCIInputImageKey])
+}
+
+func pBackground(name: String, args: String...) -> PendingFilter{
+    return PendingFilter(name, args + [kCIInputBackgroundImageKey])
+}
+
 
 struct MultiplyCompositingAddInput: Filter{
     func filter(filter: ConcreteFilter) -> ConcreteFilter {
@@ -244,6 +282,7 @@ struct MultiplyCompositing: BlendFilter {
         return filter.outputImage
     }
 }
+
 
 
 struct BlendWithMaskAddMask: Filter {
