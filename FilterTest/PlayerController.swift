@@ -35,6 +35,11 @@ class PlayerController: GLKViewController {
 //        self.layerController.vfx.append(glassDistortionLayer(mp4("Comp 1_2")))
         renderer.render <| layerController
         renderer.next()
+        
+        let pFrac = "11%p"
+        println("p type = \(FractionType.parse(pFrac).rawValue)")
+        let frac = "12%"
+        println("base type = \(FractionType.parse(frac).rawValue)")
     }
     
     func mp4(name: String) -> String {

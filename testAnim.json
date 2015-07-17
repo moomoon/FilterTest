@@ -1,0 +1,11 @@
+{
+    "end": "repeat",
+    "interval": "0.1",
+    "translation": [
+        {
+            "fromX": "53%p",
+	    "duration": "5"
+        }
+    ]
+
+}

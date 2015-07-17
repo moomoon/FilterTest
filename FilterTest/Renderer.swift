@@ -18,15 +18,15 @@ class Renderer {
         didSet{
             renderGraphContext.onSynchronize = {
                 // draw here
-                println("**********************")
+//                println("**********************")
                 let startComp = NSDate.timeIntervalSinceReferenceDate()
                 if let ciImage = (self.renderGraph?.filter as? ConcreteFilter)?.outputImage {
                     let startRender = NSDate.timeIntervalSinceReferenceDate()
-                    println("composing filter cost \(startRender - startComp)")
+//                    println("composing filter cost \(startRender - startComp)")
                     self.ciContext.drawImage(ciImage, inRect: ciImage.extent(), fromRect: ciImage.extent())
                     let finishRender = NSDate.timeIntervalSinceReferenceDate()
-                    println("render cost \(finishRender - startRender)")
-                    println("total frame time \(finishRender - self.t)")
+//                    println("render cost \(finishRender - startRender)")
+//                    println("total frame time \(finishRender - self.t)")
                     self.t = finishRender
                 }
                 self.onDraw?()
@@ -253,7 +253,7 @@ class RenderGraphContext{
         var t = NSDate.timeIntervalSinceReferenceDate()
         let syncManager = SynchronizedUpon{
             let finishDecode = NSDate.timeIntervalSinceReferenceDate()
-            println("decode cost \(finishDecode - t)")
+//            println("decode cost \(finishDecode - t)") 
             onSynchronized.value?()
             t = NSDate.timeIntervalSinceReferenceDate()
             updateManager.next()

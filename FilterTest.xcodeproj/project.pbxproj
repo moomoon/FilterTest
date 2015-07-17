@@ -19,9 +19,12 @@
 		9767621E1B4FABD9001C34D5 /* knKeepColor.cikl in Resources */ = {isa = PBXBuildFile; fileRef = 9767621D1B4FABD9001C34D5 /* knKeepColor.cikl */; };
 		976762201B4FC652001C34D5 /* HueSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9767621F1B4FC652001C34D5 /* HueSlider.swift */; };
 		976762221B4FC8E3001C34D5 /* knHueImage.cikl in Resources */ = {isa = PBXBuildFile; fileRef = 976762211B4FC8E3001C34D5 /* knHueImage.cikl */; };
+		978113D81B58A5DC00C277FF /* Cent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 978113D71B58A5DC00C277FF /* Cent.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		978113D91B58A5E900C277FF /* Cent.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 978113D71B58A5DC00C277FF /* Cent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		978113DB1B58ACE600C277FF /* Dollar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 978113DA1B58ACE600C277FF /* Dollar.framework */; };
+		978113DC1B58ACEE00C277FF /* Dollar.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 978113DA1B58ACE600C277FF /* Dollar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		978113DE1B5911F900C277FF /* testAnim.json in Resources */ = {isa = PBXBuildFile; fileRef = 978113DD1B5911F900C277FF /* testAnim.json */; };
 		97A8D4961B57BA4E007608AD /* JsonTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8D4951B57BA4E007608AD /* JsonTest.swift */; };
-		97A8D4981B57BBF6007608AD /* Curry.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97A8D4971B57BBF6007608AD /* Curry.framework */; };
-		97A8D4991B57BBFF007608AD /* Curry.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 97A8D4971B57BBF6007608AD /* Curry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		97D4AAED1B536D4600B8AA78 /* laser.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97D4AAEC1B536D4600B8AA78 /* laser.mp4 */; };
 		97EAE72A1B4F772300E45146 /* CoreImageKernels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97EAE7291B4F772300E45146 /* CoreImageKernels.swift */; };
 		97F16F1E1B4E162C0038236E /* mask.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97F16F1C1B4E162C0038236E /* mask.mp4 */; };
@@ -62,11 +65,12 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		97F6D6831B4CE1010053BFFE /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				97A8D4991B57BBFF007608AD /* Curry.framework in CopyFiles */,
+				978113DC1B58ACEE00C277FF /* Dollar.framework in CopyFiles */,
+				978113D91B58A5E900C277FF /* Cent.framework in CopyFiles */,
 				9732E0D91B5785FC005684A3 /* Argo.framework in CopyFiles */,
 				9732E0D81B5785F8005684A3 /* Runes.framework in CopyFiles */,
 				97F6D6861B4CE10D0053BFFE /* ReactiveCocoa.framework in CopyFiles */,
@@ -88,8 +92,10 @@
 		9767621D1B4FABD9001C34D5 /* knKeepColor.cikl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = knKeepColor.cikl; sourceTree = "<group>"; };
 		9767621F1B4FC652001C34D5 /* HueSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HueSlider.swift; sourceTree = "<group>"; };
 		976762211B4FC8E3001C34D5 /* knHueImage.cikl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = knHueImage.cikl; sourceTree = "<group>"; };
+		978113D71B58A5DC00C277FF /* Cent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cent.framework; path = Carthage/Build/iOS/Cent.framework; sourceTree = "<group>"; };
+		978113DA1B58ACE600C277FF /* Dollar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Dollar.framework; path = Carthage/Build/iOS/Dollar.framework; sourceTree = "<group>"; };
+		978113DD1B5911F900C277FF /* testAnim.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testAnim.json; sourceTree = "<group>"; };
 		97A8D4951B57BA4E007608AD /* JsonTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonTest.swift; sourceTree = "<group>"; };
-		97A8D4971B57BBF6007608AD /* Curry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Curry.framework; path = Carthage/Build/iOS/Curry.framework; sourceTree = "<group>"; };
 		97D4AAEC1B536D4600B8AA78 /* laser.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = laser.mp4; sourceTree = "<group>"; };
 		97EAE7291B4F772300E45146 /* CoreImageKernels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreImageKernels.swift; sourceTree = "<group>"; };
 		97F16F1C1B4E162C0038236E /* mask.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = mask.mp4; sourceTree = "<group>"; };
@@ -125,7 +131,8 @@
 			files = (
 				97F6D67F1B4CE0A70053BFFE /* Box.framework in Frameworks */,
 				97F6D6801B4CE0A70053BFFE /* ReactiveCocoa.framework in Frameworks */,
-				97A8D4981B57BBF6007608AD /* Curry.framework in Frameworks */,
+				978113D81B58A5DC00C277FF /* Cent.framework in Frameworks */,
+				978113DB1B58ACE600C277FF /* Dollar.framework in Frameworks */,
 				97F6D6811B4CE0A70053BFFE /* Result.framework in Frameworks */,
 				9732E0D71B578419005684A3 /* Runes.framework in Frameworks */,
 				9732E0D51B5783A2005684A3 /* Argo.framework in Frameworks */,
@@ -158,6 +165,7 @@
 		97F6D6461B4CB8D10053BFFE = {
 			isa = PBXGroup;
 			children = (
+				978113DD1B5911F900C277FF /* testAnim.json */,
 				97D4AAEC1B536D4600B8AA78 /* laser.mp4 */,
 				97F16F1C1B4E162C0038236E /* mask.mp4 */,
 				97F16F1D1B4E162C0038236E /* movie.mp4 */,
@@ -232,7 +240,8 @@
 		97F6D6821B4CE0BD0053BFFE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				97A8D4971B57BBF6007608AD /* Curry.framework */,
+				978113DA1B58ACE600C277FF /* Dollar.framework */,
+				978113D71B58A5DC00C277FF /* Cent.framework */,
 				9732E0D61B578419005684A3 /* Runes.framework */,
 				9732E0D41B5783A2005684A3 /* Argo.framework */,
 				97F6D67C1B4CE0A70053BFFE /* Box.framework */,
@@ -332,6 +341,7 @@
 				97F6D65A1B4CB8D20053BFFE /* Main.storyboard in Resources */,
 				976762221B4FC8E3001C34D5 /* knHueImage.cikl in Resources */,
 				97F6D65F1B4CB8D20053BFFE /* LaunchScreen.xib in Resources */,
+				978113DE1B5911F900C277FF /* testAnim.json in Resources */,
 				9767621E1B4FABD9001C34D5 /* knKeepColor.cikl in Resources */,
 				97F16F1F1B4E162C0038236E /* movie.mp4 in Resources */,
 				976762181B4F9B49001C34D5 /* RGB2HSV.cikl in Resources */,

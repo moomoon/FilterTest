@@ -10,7 +10,7 @@ import Foundation
 import CoreImage
 import Argo
 import ReactiveCocoa
-import Curry
+import Dollar
 
 protocol RenderLayer {
     func createGraph(context: RenderGraphContext, background: [RenderGraph]) -> RenderGraph
@@ -38,9 +38,9 @@ struct MainRenderLayer: RenderLayer {
             //background is not referenced here, just creating mask graphs
             let regionGroup = sum(region.0.map{ $0.createGraph(context, background: background)})
             if(region.1.count > 0){
-                graphs.append(curry <| mask <| combine([background[0]] + region.1) <| regionGroup)
+                graphs.append($.curry <| mask <| combine([background[0]] + region.1) <| regionGroup)
             } else {
-                graphs.append(curry <| mask <| background[0] <| regionGroup)
+                graphs.append($.curry <| mask <| background[0] <| regionGroup)
             }
         }
         
@@ -87,8 +87,8 @@ func glassDistortionLayerConcrete(dewMask: String, solidMask: String, background
         let background = $0.1[backgroundSelector]
         let blur = gaussian <| 10 <| background
         let dew = glassDistortion <| background <| dewVideo
-        let solidGraph = curry <| mask <| background <| solidVideo <| blur
-        return curry <| mask <| dew <| dewVideo <| solidGraph
+        let solidGraph = $.curry <| mask <| background <| solidVideo <| blur
+        return $.curry <| mask <| dew <| dewVideo <| solidGraph
     }
 }
 
@@ -103,7 +103,7 @@ func glassDistortionLayer(inputPath: String) -> RenderLayer {
 
 
 func normalLayer(inputPath: String, maskPath: String) -> RenderLayer {
-    return layer{ curry <| mask <| video(inputPath, $0.0) <| video(maskPath, $0.0) }
+    return layer{ $.curry <| mask <| video(inputPath, $0.0) <| video(maskPath, $0.0) }
 }
 
 func multiplyLayer(path: String) -> RenderLayer {
@@ -111,8 +111,8 @@ func multiplyLayer(path: String) -> RenderLayer {
 }
 
 
-func mask(inputLayer: RenderLayer)(maskLayer: RenderLayer) -> RenderLayer {
-    return layer { curry <| mask <| inputLayer.createGraph($0, background: $1) <| maskLayer.createGraph($0, background: $1) }
+func mask(inputLayer: RenderLayer, maskLayer: RenderLayer) -> RenderLayer {
+    return layer { $.curry <| mask <| inputLayer.createGraph($0, background: $1) <| maskLayer.createGraph($0, background: $1) }
 }
 
 class RetainGraphGroup: RenderGraph, Syncable, Updatable {
