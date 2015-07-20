@@ -26,6 +26,7 @@
 		978113DE1B5911F900C277FF /* testAnim.json in Resources */ = {isa = PBXBuildFile; fileRef = 978113DD1B5911F900C277FF /* testAnim.json */; };
 		97A8D4961B57BA4E007608AD /* JsonTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8D4951B57BA4E007608AD /* JsonTest.swift */; };
 		97D4AAED1B536D4600B8AA78 /* laser.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97D4AAEC1B536D4600B8AA78 /* laser.mp4 */; };
+		97DDD3CB1B5C8B19004293E6 /* CTTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DDD3CA1B5C8B19004293E6 /* CTTest.swift */; };
 		97EAE72A1B4F772300E45146 /* CoreImageKernels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97EAE7291B4F772300E45146 /* CoreImageKernels.swift */; };
 		97F16F1E1B4E162C0038236E /* mask.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97F16F1C1B4E162C0038236E /* mask.mp4 */; };
 		97F16F1F1B4E162C0038236E /* movie.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97F16F1D1B4E162C0038236E /* movie.mp4 */; };
@@ -97,6 +98,7 @@
 		978113DD1B5911F900C277FF /* testAnim.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testAnim.json; sourceTree = "<group>"; };
 		97A8D4951B57BA4E007608AD /* JsonTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonTest.swift; sourceTree = "<group>"; };
 		97D4AAEC1B536D4600B8AA78 /* laser.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = laser.mp4; sourceTree = "<group>"; };
+		97DDD3CA1B5C8B19004293E6 /* CTTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CTTest.swift; sourceTree = "<group>"; };
 		97EAE7291B4F772300E45146 /* CoreImageKernels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreImageKernels.swift; sourceTree = "<group>"; };
 		97F16F1C1B4E162C0038236E /* mask.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = mask.mp4; sourceTree = "<group>"; };
 		97F16F1D1B4E162C0038236E /* movie.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = movie.mp4; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				97EAE7291B4F772300E45146 /* CoreImageKernels.swift */,
 				9767621F1B4FC652001C34D5 /* HueSlider.swift */,
 				97A8D4951B57BA4E007608AD /* JsonTest.swift */,
+				97DDD3CA1B5C8B19004293E6 /* CTTest.swift */,
 			);
 			path = FilterTest;
 			sourceTree = "<group>";
@@ -372,6 +375,7 @@
 				970887A91B4D30D700EEBC3D /* PlayerController.swift in Sources */,
 				97EAE72A1B4F772300E45146 /* CoreImageKernels.swift in Sources */,
 				97F6D6571B4CB8D20053BFFE /* ViewController.swift in Sources */,
+				97DDD3CB1B5C8B19004293E6 /* CTTest.swift in Sources */,
 				97F6D6751B4CB9030053BFFE /* Filter.swift in Sources */,
 				97F6D6551B4CB8D20053BFFE /* AppDelegate.swift in Sources */,
 				97F6D68A1B4D023F0053BFFE /* RenderLayer.swift in Sources */,

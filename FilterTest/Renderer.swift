@@ -36,7 +36,7 @@ class Renderer {
     private var t = NSDate.timeIntervalSinceReferenceDate()
     private let renderGraphContext: RenderGraphContext
     let eaglContext: EAGLContext
-    private let ciContext: CIContext
+    let ciContext: CIContext
     var onDraw: (()->Void)?
     init(){
         //set fps here
@@ -155,6 +155,10 @@ func combine(subGraphs: [RenderGraph]) -> RenderGraph{
 func combine(a: RenderGraph)(_ b: RenderGraph) -> RenderGraph{
     return combine([b, a])
 }
+
+//func <|<F, T> (lhs: () -> (), rhs: F -> T) -> F -> T {
+//    return { let t = rhs($0); lhs(); return t }
+//}
 
 func <| <F, T>(lhs: F -> T, rhs: F) ->T {
     return lhs(rhs)
