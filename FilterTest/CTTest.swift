@@ -49,6 +49,20 @@ func test(bounds: CGRect) {
 
 typealias GlyphFragment = (CIImage, CGRect)
 
+func animateGlyphFragment(graph: GlyphFragment, status: AnimationStatus) -> CIImage {
+    let tr = graph.0.imageByApplyingTransform(CGAffineTransformMakeTranslation(status.translation.x, status.translation.y))
+    return multiplyAlpha(CGFloat(status.alpha), tr)
+}
+
+
+
+func multiplyAlpha(alpha: CGFloat, image: CIImage) -> CIImage {
+    let filter = CIFilter(name: "CIColorMatrix")
+    filter.setValue(image, forKey: kCIInputImageKey)
+    filter.setValue(CIVector(x: 0, y: 0, z: 0, w: alpha), forKey: "inputAVector")
+    return filter.outputImage
+}
+
 
 func getBounds(str: String, font: CTFont, frame: CGSize, ctFrame: CTFrameRef) -> [CGRect] {
     let nsStr = str as NSString
@@ -81,7 +95,7 @@ func drawGlyphFragment(context: CGContext, ctFrame: CTFrameRef, frame: CGSize, c
 //    CGContextSetTextMatrix(context, CGAffineTransformIdentity)
 //    CGContextTranslateCTM(context, 0, frame.height)
 //    CGContextScaleCTM(context, 1, -1)
-    CGContextSetRGBFillColor(context, 1, 0, 0, 1)
+    CGContextSetRGBFillColor(context, 0, 0, 0, 0)
     CGContextFillRect(context, CGRectMake(0, 0, frame.width, frame.height))
     CTFrameDraw(ctFrame, context)
     CGContextFlush(context)

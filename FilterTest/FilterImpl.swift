@@ -246,7 +246,6 @@ struct PendingFilter: ConcreteFilter {
     func filter(filter: ConcreteFilter) -> ConcreteFilter {
         if let first = pendingArgs.first{
             self.filter.setValue(filter.outputImage, forKey: first)
-            println("add arg \(first)")
         }
         return pendingArgs.count > 1 ?
             PendingFilter(self.filter, Array(pendingArgs[1 ..< pendingArgs.count]))
@@ -354,13 +353,16 @@ struct DummyFilter: ConcreteFilter{
 }
 
 
-func sum(filters: [Filter]) -> ConcreteFilter {
-    var interpolated = [filters[0]]
-    if filters.count > 1 {
-        let add = AdditionFilterAddInput()
-        filters[1..<filters.count].map{interpolated.append(add.filter($0 as! ConcreteFilter))}
+func sum(filters: [ConcreteFilter]) -> ConcreteFilter {
+//    var interpolated = [filters[0]]
+//    if filters.count > 1 {
+//        let add = AdditionFilterAddInput()
+//        filters[1..<filters.count].map{interpolated.append(add.filter($0 as! ConcreteFilter))}
+//    }
+//    return FilterGroup.reduceFilters(interpolated)
+    return filters[1 ..< filters.count].reduce(filters.first!){
+        ConcreteImage(outputImage: $1.outputImage.imageByCompositingOverImage($0.outputImage)) as ConcreteFilter
     }
-    return FilterGroup.reduceFilters(interpolated)
 }
 
 

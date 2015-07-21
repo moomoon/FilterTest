@@ -40,4 +40,16 @@ extension Array {
             doThis(element: e)
         }
     }
+    
+//    func mapIndex<U>(transform: (Int, T) -> U) -> [U]{
+//        let indexes = (0 ..< self.count).map{$0}
+////        let zipped = zip(self, Array(indexes))
+////        var arr = Array<U>([])
+////        var generator = zipped.generate()
+////        while let n = generator.next() {
+////            arr.append(transform(n))
+////        }
+////        return arr
+//        return []
+//    }
 }

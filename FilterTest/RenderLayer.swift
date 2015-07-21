@@ -21,6 +21,7 @@ struct MainRenderLayer: RenderLayer {
     let region: ([RenderLayer], [RenderGraph])
     let backgroundEffect: [RenderGraph]
     func createGraph(context: RenderGraphContext, background: [RenderGraph]) -> RenderGraph {
+        println("creating main layer")
         var graphs: [RenderGraph] = []
         
         let backgroundGroup: RenderGraph
@@ -44,13 +45,20 @@ struct MainRenderLayer: RenderLayer {
             }
         }
         
+        println("before creating vfx layers")
         vfx.map{graphs.append($0.createGraph(context, background: [background[0], backgroundGroup]))}
-        return combine(graphs)
+        println("before comine")
+        let a =  combine(graphs)
+        println("created main layer \(a)")
+        return a
     }
 }
 
 func layer(delegate: (RenderGraphContext, [RenderGraph]) -> RenderGraph) -> RenderLayer {
-    return DelegateLayer(delegate: delegate)
+    println("entering creating layer")
+    let l = DelegateLayer(delegate: delegate)
+    println("created textLayer")
+    return l
 }
 
 
@@ -137,5 +145,5 @@ class RetainGraphGroup: RenderGraph, Syncable, Updatable {
 }
 
 func sum(graphs: [RenderGraph]) -> RenderGraph {
-    return delegateGraphGroup(graphs, sum)
+    return delegateGraphGroup(graphs){ sum($0.map{$0 as! ConcreteFilter})}
 }

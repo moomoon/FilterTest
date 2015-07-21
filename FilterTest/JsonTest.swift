@@ -31,7 +31,7 @@ private func interpolate(durationProv: DurationProv, ratio: Double, pInterpolato
 
 private func ratioForTimeIn(time: Double, pDuration: Double, pInterpolator: Interpolator, durationProv: DurationProv) -> Double {
     let r = forTime(durationProv, time, pDuration)
-    return interpolate(durationProv, r, pInterpolator)
+    return interpolate(durationProv, max(min(r, 1.0), 0.0), pInterpolator)
 }
 
 private func getTime(animSet: AnimationSet, time: Double, id: Int) -> Double {
@@ -68,7 +68,24 @@ enum FractionType: String {
         return (str =~ ".*[pP]$") ? .PBase : .Base
     }
     func process(str: String) -> String {
-        return PBase == self ? str[0 ..< str.length] : str
+        if self == PBase {
+            return str.substringWithRange(Range<String.Index>(start: str.startIndex, end: str.endIndex.predecessor()))
+        }
+        return str
+    }
+}
+
+enum Order: String{
+    case Asc = "ascending", Desc = "descending", Rnd = "random"
+    static func parse(str: String?) -> Order {
+        return (str >>- { Order(rawValue: $0) }) ?? Asc
+    }
+    func getIndex(id: Int, count: Int) -> Int{
+        switch self {
+        case Asc:   return id
+        case Desc:  return count - id
+        case Rnd:   return Int(arc4random_uniform(UInt32(count)))
+        }
     }
 }
 typealias BFraction = (type: FractionType, value: Double)
@@ -76,10 +93,12 @@ typealias BFraction = (type: FractionType, value: Double)
 private func bFraction(str: String?) -> BFraction{
     if nil == str { return (FractionType.Base, 0)}
     let type = FractionType.parse(str!)
-    return (type, fraction(type.process(str!)))
+    let a = (type, fraction(type.process(str!)))
+    println("created fraction from \(str) value = \(a.1)")
+    return a
 }
 
-private func fraction(str: String) -> Double {
+func fraction(str: String) -> Double {
     let (base: Double, doubleStr) = (str =~ ".*%$") ? (100, str[0 ..< str.length]) : (1, str)
     return (doubleStr as NSString).doubleValue / base
 }
@@ -169,18 +188,22 @@ enum AnimationEndType {
 typealias Interpolator = (Double) -> Double
 
 func getInterpolator(identifier: String?) -> Interpolator {
-    return {sqrt($0)}
+//    return {sqrt($0)}
+    return {$0}
 }
 
 struct AnimationSet: Decodable {
+    let order: Order
     let endType: AnimationEndType
     let interpolator: Interpolator
     let duration: Double
     let interval: Double
     let alpha: [AlphaAnim]
     let translation: [TranslationAnim]
-    static func animationSet(endType: String?, _interpolator: String?, _duration: Double?, _interval: Double?, alpha: [AlphaAnim], translation: [TranslationAnim]) -> AnimationSet{
+    static func animationSet(_order: String?, endType: String?, _interpolator: String?, _duration: Double?, _interval: Double?, _alpha: [AlphaAnim]?, _translation: [TranslationAnim]?) -> AnimationSet{
         let duration: Double
+        let alpha = _alpha ?? []
+        let translation = _translation ?? []
         if nil == _duration {
             let map = {($0 as DurationProv).delay + (($0 as DurationProv).duration ?? 0)}
             duration = (alpha.map{ map($0) } + translation.map{ map($0) }).reduce(0, combine: max)
@@ -188,6 +211,7 @@ struct AnimationSet: Decodable {
             duration = _duration!
         }
         return AnimationSet(
+            order           : Order.parse(_order),
             endType         : AnimationEndType.parse(endType),
             interpolator    : getInterpolator(_interpolator),
             duration        : duration,
@@ -197,12 +221,13 @@ struct AnimationSet: Decodable {
     }
     static func decode(j: JSON) -> Decoded<AnimationSet> {
         return $.curry <| animationSet
-            <^> j <|? "end"
+            <^> j <|? "order"
+            <*> j <|? "end"
             <*> j <|? "interpolator"
             <*> j <|? "duration"
             <*> j <|? "interval"
-            <*> j <|| "alpha"
-            <*> j <|| "translation"
+            <*> ***(j <||? "alpha")
+            <*> ***(j <||? "translation")
     }
 }
 
@@ -212,7 +237,7 @@ struct AnimationStatus {
     let translation: CGPoint
     let alpha: Double
     
-    static func gen(animSet: AnimationSet, size: CGSize, pSize: CGSize, time: Double, id: Int) -> AnimationStatus {
+    static func gen(animSet: AnimationSet, pSize: CGSize, time: Double, size: CGSize, id: Int) -> AnimationStatus {
         let _t = getTime(animSet, time, id)
         let t: Double
         if _t > animSet.duration {
@@ -237,6 +262,18 @@ struct AnimationStatus {
     }
 }
 
+func JSONFromFile(type: String, file: String) -> AnyObject? {
+    return NSBundle.mainBundle().pathForResource(file, ofType: type)
+        >>- { NSData(contentsOfFile: $0) }
+        >>- { NSJSONSerialization.JSONObjectWithData($0, options: nil, error: nil) }
+}
 
 
+prefix operator *** {
+}
 
+
+prefix func *** <T>(t: T) -> T {
+    println("logger \(t)")
+    return t
+}

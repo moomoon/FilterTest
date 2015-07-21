@@ -53,7 +53,9 @@ class Renderer {
     func render(mainLayer: MainRenderLayer, background: [RenderLayer]){
         self.renderGraphContext.clear()
         let backgroundGraph = background.map{ $0.createGraph(self.renderGraphContext, background:[])}
+        println("created background render graphs")
         self.renderGraph = mainLayer.createGraph(self.renderGraphContext, background: backgroundGraph)
+        println("created renderGraphs")
     }
     
     func render(controller: LayerController){
@@ -149,7 +151,10 @@ func delegateGraphGroup(subGraphs: [RenderGraph], delegate:([Filter]) -> Concret
     return DelegateGraphGroup(subGraphs: subGraphs, delegate: delegate)
 }
 func combine(subGraphs: [RenderGraph]) -> RenderGraph{
-    return DelegateGraphGroup(subGraphs: subGraphs, delegate: FilterGroup.reduceFilters)
+    subGraphs.map{println("combining \($0)")}
+    let g = DelegateGraphGroup(subGraphs: subGraphs, delegate: FilterGroup.reduceFilters)
+    println("finished creating DelegateGroup")
+    return g
 }
 
 func combine(a: RenderGraph)(_ b: RenderGraph) -> RenderGraph{
@@ -169,11 +174,11 @@ func <| <A, B, C>(lhs: B -> C, rhs: A -> B) -> A -> C{
 }
 
 func <| (lhs: RenderGraph, rhs: RenderGraph) -> RenderGraph{
-    return combine <| lhs <| rhs
+    return combine(lhs)(rhs)
 }
 
 func <| (lhs: Filter, rhs: RenderGraph) -> RenderGraph {
-    return immutable <| lhs <| rhs
+    return combine(immutable(lhs))(rhs)
 }
 
 
@@ -193,13 +198,13 @@ func <| <A> (lhs: Filter, rhs: A -> RenderGraph) -> A -> RenderGraph{
 //    return {lhs <| rhs($0)}
 //}
 //
-func |> <F, T> (lhs: F, rhs: F -> T) -> T {
-    return rhs(lhs)
-}
+//func |> <F, T> (lhs: F, rhs: F -> T) -> T {
+//    return rhs(lhs)
+//}
 
-func |> <A, B, C> (lhs: A -> B, rhs: B -> C) -> A -> C {
-    return { rhs(lhs($0)) }
-}
+//func |> <A, B, C> (lhs: A -> B, rhs: B -> C) -> A -> C {
+//    return { rhs(lhs($0)) }
+//}
 
 func |> (lhs: RenderGraph, rhs: RenderGraph) -> RenderGraph {
     return combine <| rhs <| lhs
@@ -231,6 +236,10 @@ func mask(input: RenderGraph, mask: RenderGraph) -> RenderGraph {
 
 func multiply(graph: RenderGraph) -> RenderGraph {
     return pBackground("CIMultiplyCompositing", kCIInputImageKey) <| graph
+}
+
+func alphaCompose(graph: RenderGraph) -> RenderGraph {
+    return pBackground("CIBlendWithAlphaMask", kCIInputImageKey, kCIInputMaskImageKey) <| graph <| graph
 }
 
 func monoEdge(graph: RenderGraph) -> RenderGraph {

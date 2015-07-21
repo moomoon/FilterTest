@@ -1,10 +1,23 @@
 {
-    "end": "repeat",
-    "interval": "0.1",
+    "order": "random",
+    "end": "Repeat",
+    "interval": 0.2,
     "translation": [
         {
-            "fromX": "53%p",
-	    "duration": "5"
+            "fromX": "100%",
+            "duration": 1
+        },
+        {
+            "toX": "50%",
+            "duration": 1,
+            "delay": 1
+        }
+    ],
+    "alpha": [
+        {
+            "from": 0,
+            "to": 1,
+            "duration":2
         }
     ]
 
