@@ -20,11 +20,12 @@
 		9767621E1B4FABD9001C34D5 /* knKeepColor.cikl in Resources */ = {isa = PBXBuildFile; fileRef = 9767621D1B4FABD9001C34D5 /* knKeepColor.cikl */; };
 		976762201B4FC652001C34D5 /* HueSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9767621F1B4FC652001C34D5 /* HueSlider.swift */; };
 		976762221B4FC8E3001C34D5 /* knHueImage.cikl in Resources */ = {isa = PBXBuildFile; fileRef = 976762211B4FC8E3001C34D5 /* knHueImage.cikl */; };
-		978113D81B58A5DC00C277FF /* Cent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 978113D71B58A5DC00C277FF /* Cent.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		978113D91B58A5E900C277FF /* Cent.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 978113D71B58A5DC00C277FF /* Cent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		978113DB1B58ACE600C277FF /* Dollar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 978113DA1B58ACE600C277FF /* Dollar.framework */; };
-		978113DC1B58ACEE00C277FF /* Dollar.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 978113DA1B58ACE600C277FF /* Dollar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		978113DE1B5911F900C277FF /* testAnim.json in Resources */ = {isa = PBXBuildFile; fileRef = 978113DD1B5911F900C277FF /* testAnim.json */; };
+		9788FF4D1B5F646C00314397 /* GLCIBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9788FF4C1B5F646C00314397 /* GLCIBridge.swift */; };
+		9788FF7E1B5F701F00314397 /* Cent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9788FF7B1B5F6FD300314397 /* Cent.framework */; };
+		9788FF7F1B5F701F00314397 /* Cent.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9788FF7B1B5F6FD300314397 /* Cent.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9788FF8B1B5F797500314397 /* Dollar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9788FF8A1B5F797500314397 /* Dollar.framework */; };
+		9788FF8C1B5F797500314397 /* Dollar.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9788FF8A1B5F797500314397 /* Dollar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		979FB4BB1B5DD97800481A48 /* TextGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979FB4BA1B5DD97800481A48 /* TextGenerator.swift */; };
 		97A8D4961B57BA4E007608AD /* JsonTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8D4951B57BA4E007608AD /* JsonTest.swift */; };
 		97D4AAED1B536D4600B8AA78 /* laser.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 97D4AAEC1B536D4600B8AA78 /* laser.mp4 */; };
@@ -56,6 +57,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9788FF7A1B5F6FD300314397 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9788FF741B5F6FD300314397 /* Cent.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 924F92DC195F8338003DBB60;
+			remoteInfo = Cent;
+		};
+		9788FF7C1B5F6FD300314397 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9788FF741B5F6FD300314397 /* Cent.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 92E6688119F0B89600BB4FB8;
+			remoteInfo = CentTests;
+		};
+		9788FF801B5F701F00314397 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9788FF741B5F6FD300314397 /* Cent.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 924F92DB195F8338003DBB60;
+			remoteInfo = Cent;
+		};
 		97F6D6651B4CB8D20053BFFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 97F6D6471B4CB8D10053BFFE /* Project object */;
@@ -72,10 +94,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				978113DC1B58ACEE00C277FF /* Dollar.framework in CopyFiles */,
-				978113D91B58A5E900C277FF /* Cent.framework in CopyFiles */,
 				9732E0D91B5785FC005684A3 /* Argo.framework in CopyFiles */,
 				9732E0D81B5785F8005684A3 /* Runes.framework in CopyFiles */,
+				9788FF7F1B5F701F00314397 /* Cent.framework in CopyFiles */,
+				9788FF8C1B5F797500314397 /* Dollar.framework in CopyFiles */,
 				97F6D6861B4CE10D0053BFFE /* ReactiveCocoa.framework in CopyFiles */,
 				97F6D6851B4CE10B0053BFFE /* Box.framework in CopyFiles */,
 				97F6D6841B4CE1080053BFFE /* Result.framework in CopyFiles */,
@@ -96,9 +118,10 @@
 		9767621D1B4FABD9001C34D5 /* knKeepColor.cikl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = knKeepColor.cikl; sourceTree = "<group>"; };
 		9767621F1B4FC652001C34D5 /* HueSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HueSlider.swift; sourceTree = "<group>"; };
 		976762211B4FC8E3001C34D5 /* knHueImage.cikl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = knHueImage.cikl; sourceTree = "<group>"; };
-		978113D71B58A5DC00C277FF /* Cent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cent.framework; path = Carthage/Build/iOS/Cent.framework; sourceTree = "<group>"; };
-		978113DA1B58ACE600C277FF /* Dollar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Dollar.framework; path = Carthage/Build/iOS/Dollar.framework; sourceTree = "<group>"; };
 		978113DD1B5911F900C277FF /* testAnim.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testAnim.json; sourceTree = "<group>"; };
+		9788FF4C1B5F646C00314397 /* GLCIBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLCIBridge.swift; sourceTree = "<group>"; };
+		9788FF741B5F6FD300314397 /* Cent.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cent.xcodeproj; path = ../../Work/Dollar.swift/Cent/Cent.xcodeproj; sourceTree = "<group>"; };
+		9788FF8A1B5F797500314397 /* Dollar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Dollar.framework; path = "/Users/jiajing/Library/Developer/Xcode/DerivedData/FilterTest-fuvfddgeyluroiedxfirscanzszj/Build/Products/Debug-iphoneos/Dollar.framework"; sourceTree = "<absolute>"; };
 		979FB4BA1B5DD97800481A48 /* TextGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextGenerator.swift; sourceTree = "<group>"; };
 		97A8D4951B57BA4E007608AD /* JsonTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonTest.swift; sourceTree = "<group>"; };
 		97D4AAEC1B536D4600B8AA78 /* laser.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = laser.mp4; sourceTree = "<group>"; };
@@ -137,8 +160,8 @@
 			files = (
 				97F6D67F1B4CE0A70053BFFE /* Box.framework in Frameworks */,
 				97F6D6801B4CE0A70053BFFE /* ReactiveCocoa.framework in Frameworks */,
-				978113D81B58A5DC00C277FF /* Cent.framework in Frameworks */,
-				978113DB1B58ACE600C277FF /* Dollar.framework in Frameworks */,
+				9788FF7E1B5F701F00314397 /* Cent.framework in Frameworks */,
+				9788FF8B1B5F797500314397 /* Dollar.framework in Frameworks */,
 				97F6D6811B4CE0A70053BFFE /* Result.framework in Frameworks */,
 				9732E0D71B578419005684A3 /* Runes.framework in Frameworks */,
 				9732E0D51B5783A2005684A3 /* Argo.framework in Frameworks */,
@@ -168,9 +191,19 @@
 			name = CIKL;
 			sourceTree = "<group>";
 		};
+		9788FF751B5F6FD300314397 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9788FF7B1B5F6FD300314397 /* Cent.framework */,
+				9788FF7D1B5F6FD300314397 /* CentTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		97F6D6461B4CB8D10053BFFE = {
 			isa = PBXGroup;
 			children = (
+				9788FF741B5F6FD300314397 /* Cent.xcodeproj */,
 				974450E31B5E7E9700D37C85 /* anim.json */,
 				978113DD1B5911F900C277FF /* testAnim.json */,
 				97D4AAEC1B536D4600B8AA78 /* laser.mp4 */,
@@ -217,6 +250,7 @@
 				97A8D4951B57BA4E007608AD /* JsonTest.swift */,
 				97DDD3CA1B5C8B19004293E6 /* CTTest.swift */,
 				979FB4BA1B5DD97800481A48 /* TextGenerator.swift */,
+				9788FF4C1B5F646C00314397 /* GLCIBridge.swift */,
 			);
 			path = FilterTest;
 			sourceTree = "<group>";
@@ -249,8 +283,7 @@
 		97F6D6821B4CE0BD0053BFFE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				978113DA1B58ACE600C277FF /* Dollar.framework */,
-				978113D71B58A5DC00C277FF /* Cent.framework */,
+				9788FF8A1B5F797500314397 /* Dollar.framework */,
 				9732E0D61B578419005684A3 /* Runes.framework */,
 				9732E0D41B5783A2005684A3 /* Argo.framework */,
 				97F6D67C1B4CE0A70053BFFE /* Box.framework */,
@@ -275,6 +308,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9788FF811B5F701F00314397 /* PBXTargetDependency */,
 			);
 			name = FilterTest;
 			productName = FilterTest;
@@ -330,6 +364,12 @@
 			mainGroup = 97F6D6461B4CB8D10053BFFE;
 			productRefGroup = 97F6D6501B4CB8D10053BFFE /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9788FF751B5F6FD300314397 /* Products */;
+					ProjectRef = 9788FF741B5F6FD300314397 /* Cent.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				97F6D64E1B4CB8D10053BFFE /* FilterTest */,
@@ -337,6 +377,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9788FF7B1B5F6FD300314397 /* Cent.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Cent.framework;
+			remoteRef = 9788FF7A1B5F6FD300314397 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9788FF7D1B5F6FD300314397 /* CentTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CentTests.xctest;
+			remoteRef = 9788FF7C1B5F6FD300314397 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		97F6D64D1B4CB8D10053BFFE /* Resources */ = {
@@ -383,6 +440,7 @@
 				97EAE72A1B4F772300E45146 /* CoreImageKernels.swift in Sources */,
 				97F6D6571B4CB8D20053BFFE /* ViewController.swift in Sources */,
 				97DDD3CB1B5C8B19004293E6 /* CTTest.swift in Sources */,
+				9788FF4D1B5F646C00314397 /* GLCIBridge.swift in Sources */,
 				97F6D6751B4CB9030053BFFE /* Filter.swift in Sources */,
 				97F6D6551B4CB8D20053BFFE /* AppDelegate.swift in Sources */,
 				97F6D68A1B4D023F0053BFFE /* RenderLayer.swift in Sources */,
@@ -405,6 +463,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9788FF811B5F701F00314397 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Cent;
+			targetProxy = 9788FF801B5F701F00314397 /* PBXContainerItemProxy */;
+		};
 		97F6D6661B4CB8D20053BFFE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 97F6D64E1B4CB8D10053BFFE /* FilterTest */;
@@ -524,6 +587,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"/Users/jiajing/Work/Dollar.swift/Dollar/build/Debug-iphoneos",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/FilterTest-fuvfddgeyluroiedxfirscanzszj/Build/Products/Debug-iphoneos",
 				);
 				INFOPLIST_FILE = FilterTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -539,6 +604,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"/Users/jiajing/Work/Dollar.swift/Dollar/build/Debug-iphoneos",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/FilterTest-fuvfddgeyluroiedxfirscanzszj/Build/Products/Debug-iphoneos",
 				);
 				INFOPLIST_FILE = FilterTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

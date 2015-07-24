@@ -90,21 +90,23 @@ func getBounds(str: String, font: CTFont, frame: CGSize, ctFrame: CTFrameRef) ->
     return Array(zip(charOrigins, charBounds)).map{CGRectMake($0.x + $1.origin.x,  $0.y + $1.origin.y, $1.width, $1.height)}
 }
 
-func drawGlyphFragment(context: CGContext, ctFrame: CTFrameRef, frame: CGSize, charFrames: [CGRect]) -> [GlyphFragment] {
-    CGContextSaveGState(context)
+func drawGlyphFragment(eaglContext: EAGLContext, cgContext: CGContext, ctFrame: CTFrameRef, frame: CGSize, charFrames: [CGRect]) -> [GlyphFragment] {
+    CGContextSaveGState(cgContext)
 //    CGContextSetTextMatrix(context, CGAffineTransformIdentity)
 //    CGContextTranslateCTM(context, 0, frame.height)
 //    CGContextScaleCTM(context, 1, -1)
-    CGContextSetRGBFillColor(context, 0, 0, 0, 0)
-    CGContextFillRect(context, CGRectMake(0, 0, frame.width, frame.height))
-    CTFrameDraw(ctFrame, context)
-    CGContextFlush(context)
-    let cgImage = CGBitmapContextCreateImage(context)
-    CGContextRestoreGState(context)
-    let ciImage = CIImage(CGImage: cgImage)
+    CGContextSetRGBFillColor(cgContext, 0, 0, 0, 0)
+    CGContextFillRect(cgContext, CGRectMake(0, 0, frame.width, frame.height))
+    CTFrameDraw(ctFrame, cgContext)
+    CGContextFlush(cgContext)
+    let cgImage = CGBitmapContextCreateImage(cgContext)
+    CGContextRestoreGState(cgContext)
+//    let ciImage = CIImage(CGImage: cgImage)
+    let ciImage = CIImageWithGLContext(cgImage: cgImage, eaglContext)
 //    let cropFilter = CIFilter(name: "CICrop")!
 //    cropFilter.setValue(ciImage, forKey: kCIInputImageKey)
-    return charFrames.map{ println("cropping to \($0)"); return (ciImage.imageByCroppingToRect($0), $0)}
+
+    return charFrames.map{ return (ciImage.imageByCroppingToRect($0), $0)}
 }
 
 

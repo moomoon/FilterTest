@@ -31,7 +31,7 @@ class TextGenerator: Updatable, Syncable, RenderGraph {
         return nil == _filter ? DummyFilter() : _filter!
     }
     
-    init(str: String, font: CTFont, frame: CGSize, animationSet: AnimationSet, synced: Synced){
+    init(eaglContext: EAGLContext, str: String, font: CTFont, frame: CGSize, animationSet: AnimationSet, synced: Synced){
         self.synced = synced
         self.animationSet = animationSet
         let option = [kCTFontAttributeName : font, kCTForegroundColorAttributeName: UIColor.whiteColor()] as [NSString : AnyObject]
@@ -42,7 +42,7 @@ class TextGenerator: Updatable, Syncable, RenderGraph {
         let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
         var bitmapInfo = CGBitmapInfo.ByteOrderDefault | CGBitmapInfo(CGImageAlphaInfo.PremultipliedLast.rawValue)
         let cgContext = CGBitmapContextCreate(nil, Int(frame.width), Int(frame.height), 8, 0, rgbColorSpace, bitmapInfo)
-        let frags = drawGlyphFragment(cgContext, ctFrame, frame, getBounds(str, font, frame, ctFrame))
+        let frags = drawGlyphFragment(eaglContext, cgContext, ctFrame, frame, getBounds(str, font, frame, ctFrame))
         self.graphs = Array(zip(frags, (0 ..< frags.count).map{animationSet.order.getIndex($0, count: frags.count)}))
         currTime.producer |> map($.curry <| AnimationStatus.gen <| animationSet <| frame)
             |> skip(1)

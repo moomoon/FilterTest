@@ -23,6 +23,8 @@ class PlayerController: GLKViewController {
 //    var graphs: [GlyphFragment]?
     var textGen: TextGenerator?
     override func viewDidLoad() {
+        var foobar: Foobar? = Foobar()
+        foobar = nil
 //        self.imageView.image = hueImage(imageView.bounds.width, imageView.bounds.height)
         self.glkView.context = renderer.eaglContext
         self.backgroundVideoPath = mp4("laser")
@@ -40,30 +42,31 @@ class PlayerController: GLKViewController {
 //        self.layerController.vfx.append(glassDistortionLayer(mp4("Comp 1_2")))
         
 //        let start = NSDate.timeIntervalSinceReferenceDate()
-        let f = fraction("11%")
-        println("fractionTest 11% = \(f)")
-        let str = "一二三四五六七八九十是一事儿"
-        let font = CTFontCreateWithName("PingFang-SC-Medium", 40, nil)
-        let frame = CGSize(width: 500, height: 300)
-        let animationSet: AnimationSet? = JSONFromFile("json", "anim") >>- decode
-        println("animationSet = \(animationSet)")
-
-        let textLayer = layer {
-            let textGenerator = TextGenerator(str: str, font: font, frame: frame, animationSet: animationSet!, synced: $0.0.syncManager.newSynced())
-            println("outside init")
-            $0.0.updateManager.registerUpdatable(textGenerator)
-//            self.graphs = textGenerator.graphs
-            self.textGen = textGenerator
-            return pBackground("CISourceOverCompositing", kCIInputImageKey) <| textGenerator
+//        let f = fraction("11%")
+//        println("fractionTest 11% = \(f)")
+////        let str = "一二三四五六七八九十九八七六五四三二一"
+//        let str = "一二三四五六七"//八九十九八七六五四三二一"
+//        let font = CTFontCreateWithName("PingFang-SC-Medium", 40, nil)
+//        let frame = CGSize(width: 500, height: 300)
+//        let animationSet: AnimationSet? = JSONFromFile("json", "anim") >>- decode
+//        println("animationSet = \(animationSet)")
 //
-//            return textGenerator
-//            return multiply(textGenerator)
-        }
-        self.layerController.vfx.append(textLayer)
+//        let textLayer = layer {
+//            let textGenerator = TextGenerator(eaglContext: self.renderer.eaglContext, str: str, font: font, frame: frame, animationSet: animationSet!, synced: $0.0.syncManager.newSynced())
+//            println("outside init")
+//            $0.0.updateManager.registerUpdatable(textGenerator)
+////            self.graphs = textGenerator.graphs
+//            self.textGen = textGenerator
+//            return pBackground("CISourceOverCompositing", kCIInputImageKey) <| textGenerator
+////
+////            return textGenerator
+////            return multiply(textGenerator)
+//        }
+//        self.layerController.vfx.append(textLayer)
         
         
-        renderer.render <| layerController
-        renderer.next()
+//        renderer.render <| layerController
+//        renderer.next()
 //        renderer.onDraw = {
 ////            if let g = self.graphs {
 ////                g.map{
@@ -107,4 +110,19 @@ class PlayerController: GLKViewController {
         return NSBundle.mainBundle().pathForResource(name, ofType: "mp4")!
     }
     
+}
+
+class Foobar {
+    let msg = MutableProperty("init")
+    let echo = MutableProperty("echo start")
+    init(){
+        msg.producer |> start(next:{[unowned self] in self.log($0)})
+        echo.producer |> start(next:{println("echo \($0)")})
+    }
+    func log(msg: String){
+        println(msg)
+    }
+    deinit{
+        println("deinit")
+    }
 }

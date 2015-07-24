@@ -10,6 +10,7 @@ import Foundation
 import CoreImage
 import Argo
 import ReactiveCocoa
+import Cent
 import Dollar
 
 protocol RenderLayer {
